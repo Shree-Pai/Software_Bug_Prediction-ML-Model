@@ -46,23 +46,15 @@ python bug_prediction.py
 1. **Classification Report Heatmap:**
    - Displays F1-scores for each model and class.
 
-   ![F1-Score Heatmap Example](path_to_heatmap_image.png)
+  ![Classification Report](image.png)
 
 2. **Confusion Matrices:**
    - Separate confusion matrices for SVM, Random Forest, and KNN.
 
-   ![Confusion Matrix Example](path_to_confusion_matrix_image.png)
+   ![Confusion Matrix](image-1.png)
 
 3. **Accuracy Comparison Bar Chart:**
    - Compares the overall accuracy of the models.
-
-   ![Accuracy Bar Chart Example](path_to_accuracy_chart_image.png)
-
-## Example Output
-
-![Classification Report](image.png)
-
-![Confusion Matrix](image-1.png)
 
 ![Model Accuracy Comparison](image-2.png)
 
