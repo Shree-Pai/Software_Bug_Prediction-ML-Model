@@ -11,11 +11,18 @@ import seaborn as sns
 
 # Step 1: Load the Dataset
 dataset_path = 'C:/Users/SHREELAKSHMI PAI/Downloads/bug_prediction_dataset_500.csv'  # Replace with your dataset path
-data = pd.read_csv(dataset_path)
+try:
+    data = pd.read_csv(dataset_path)
+except FileNotFoundError:
+    raise FileNotFoundError(f"Dataset not found at {dataset_path}. Please check the path.")
 
 # Step 2: Data Preprocessing
 # Handle missing values
 data.ffill(inplace=True)
+
+# Check if 'Severity' column exists
+if 'Severity' not in data.columns:
+    raise ValueError("The dataset must contain a 'Severity' column.")
 
 # Encode categorical variables (if any)
 label_encoders = {}
@@ -27,6 +34,11 @@ for column in data.select_dtypes(include=['object']).columns:
 # Feature-target split
 X = data.drop('Severity', axis=1)  # Replace 'Severity' with your target column name
 y = data['Severity']
+
+# Encode target if necessary
+if y.dtype == 'object':
+    label_encoder = LabelEncoder()
+    y = label_encoder.fit_transform(y)
 
 # Normalize features
 scaler = StandardScaler()
@@ -62,11 +74,12 @@ for model_name, predictions in models.items():
     accuracies[model_name] = accuracy_score(y_test, predictions)
 
 # Plot Confusion Matrices
+cm_labels = np.unique(y_test)  # Dynamic labels
 plt.figure(figsize=(15, 5))
 for i, (model_name, predictions) in enumerate(models.items(), 1):
-    cm = confusion_matrix(y_test, predictions)
+    cm = confusion_matrix(y_test, predictions, labels=cm_labels)
     plt.subplot(1, 3, i)
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=np.unique(y), yticklabels=np.unique(y))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=cm_labels, yticklabels=cm_labels)
     plt.title(f'{model_name} Confusion Matrix')
     plt.ylabel('Actual')
     plt.xlabel('Predicted')
@@ -80,4 +93,5 @@ plt.bar(accuracies.keys(), accuracies.values(), color=['blue', 'green', 'orange'
 plt.title('Model Accuracy Comparison')
 plt.ylabel('Accuracy')
 plt.xlabel('Models')
+plt.ylim(0, 1)  # Set y-axis range from 0 to 1
 plt.show()
